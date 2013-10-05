@@ -1,0 +1,28 @@
+From f6a7092309e81326bf1fced4f8deb15bebcae9f1 Mon Sep 17 00:00:00 2001
+From: Andrew Knight <andrew.knight@digia.com>
+Date: Sat, 31 Aug 2013 16:36:25 +0300
+Subject: [PATCH] Fix possible build failure in windowcontainer example
+
+The windowcontainer example utilzes the openglwindow example, so it
+must also check that OpenGL is available.
+
+Change-Id: I7ecb372cfd533bb56effe7c61ebee9bd53de4c54
+Reviewed-by: Friedemann Kleint <Friedemann.Kleint@digia.com>
+---
+ examples/widgets/widgets.pro | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/examples/widgets/widgets.pro b/examples/widgets/widgets.pro
+index 726494f..d45a805 100644
+--- a/examples/widgets/widgets.pro
++++ b/examples/widgets/widgets.pro
+@@ -22,5 +22,6 @@ SUBDIRS       = \
+                 widgets \
+                 windowcontainer
+ 
++!contains(QT_CONFIG, opengl(es1|es2)?): SUBDIRS -= windowcontainer
+ contains(DEFINES, QT_NO_CURSOR): SUBDIRS -= mainwindows
+ contains(DEFINES, QT_NO_DRAGANDDROP): SUBDIRS -= draganddrop
+-- 
+1.8.4.rc3
+

@@ -60,6 +60,12 @@ QT5BASE_LICENSE = Commercial license
 QT5BASE_REDISTRIBUTE = NO
 endif
 
+ifeq ($(BR2_PACKAGE_QT5BASE_EXAMPLES),y)
+QT5BASE_CONFIGURE_OPTS += -make examples -compile-examples
+else
+QT5BASE_CONFIGURE_OPTS += -nomake examples
+endif
+
 # Qt5 SQL Plugins
 ifeq ($(BR2_PACKAGE_QT5BASE_SQL),y)
 ifeq ($(BR2_PACKAGE_QT5BASE_MYSQL),y)
@@ -178,8 +184,9 @@ define QT5BASE_CONFIGURE_CMDS
 		-hostprefix $(HOST_DIR)/usr \
 		-sysroot $(STAGING_DIR) \
 		-plugindir /usr/lib/qt/plugins \
+		-examplesdir /usr/lib/qt/examples \
 		-no-rpath \
-		-nomake examples -nomake tests \
+		-nomake tests \
 		-device buildroot \
 		-no-c++11 \
 		$(QT5BASE_CONFIGURE_OPTS) \
@@ -215,15 +222,24 @@ define QT5BASE_INSTALL_TARGET_FONTS
 	fi
 endef
 
+define QT5BASE_INSTALL_TARGET_EXAMPLES
+	if [ -d $(STAGING_DIR)/usr/lib/qt/examples/ ] ; then \
+		mkdir -p $(TARGET_DIR)/usr/lib/qt/examples ; \
+		cp -dpfr $(STAGING_DIR)/usr/lib/qt/examples/* $(TARGET_DIR)/usr/lib/qt/examples ; \
+	fi
+endef
+
 ifeq ($(BR2_PREFER_STATIC_LIB),y)
 define QT5BASE_INSTALL_TARGET_CMDS
 	$(QT5BASE_INSTALL_TARGET_FONTS)
+	$(QT5BASE_INSTALL_TARGET_EXAMPLES)
 endef
 else
 define QT5BASE_INSTALL_TARGET_CMDS
 	$(QT5BASE_INSTALL_TARGET_LIBS)
 	$(QT5BASE_INSTALL_TARGET_PLUGINS)
 	$(QT5BASE_INSTALL_TARGET_FONTS)
+	$(QT5BASE_INSTALL_TARGET_EXAMPLES)
 endef
 endif
 
